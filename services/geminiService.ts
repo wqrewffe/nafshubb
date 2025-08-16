@@ -1,4 +1,4 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI, Type } from "./genaiShim";
 import { 
     TopicExploration, SmartGoal, Flashcard, WeeklyPlan, EssayOutline, QuizQuestion, 
     Analogy, ProbingQuestion, ConceptMap, CodeExplanation, DebatePoints, ResumeKeywords, 
@@ -9,13 +9,24 @@ import {
     CreativeMetaphor, FutureSelfNarrative
 } from '../types';
 
-if (!process.env.API_KEY) {
-    throw new Error("API_KEY environment variable not set");
+declare global {
+    interface ImportMeta {
+        env: {
+            VITE_GEMINI_API_KEY: string;
+        };
+    }
 }
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const getAIClient = () => {
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    if (!apiKey) {
+        throw new Error("VITE_GEMINI_API_KEY environment variable not set");
+    }
+    return new GoogleGenAI({ apiKey });
+};
 
 const callApi = async (contents: string, responseSchema: any) => {
+    const ai = getAIClient();
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents,
@@ -28,6 +39,7 @@ const callApi = async (contents: string, responseSchema: any) => {
 }
 
 export async function getDailyAffirmation(): Promise<string> {
+  const ai = getAIClient();
   const response = await ai.models.generateContent({
     model: 'gemini-2.5-flash',
     contents: 'Generate a short, powerful, and encouraging affirmation for a student focused on learning and personal growth. Make it a single sentence.',

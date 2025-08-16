@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     define: {
-      'process.env.VITE_GEMINI_API_KEY': JSON.stringify(env.VITE_GEMINI_API_KEY),
+      // Environment variables are automatically injected by Vite
     },
     resolve: {
       alias: {
@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => {
     preview: {
       host: '0.0.0.0',
       port: Number(process.env.PORT) || 4173,
-      allowedHosts: ['nafshubb.onrender.com'],
+      allowedHosts: ['nafshub.onrender.com'],
     },
     optimizeDeps: {
       include: [
@@ -35,8 +35,12 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       rollupOptions: {
-        // Node-only modules should be externalized
-        external: ['@google/genai']
+        external: [],
+        output: {
+          manualChunks: {
+            vendor: ['@google/generative-ai']
+          }
+        }
       }
     }
   };
