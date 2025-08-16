@@ -1,6 +1,12 @@
-import { GoogleGenerativeAI, GenerativeModel, GenerationConfig } from '@google/generative-ai';
+import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
 
-export type Type = GenerationConfig;
+export const Type = {
+  OBJECT: 'object',
+  STRING: 'string',
+  ARRAY: 'array',
+  NUMBER: 'number',
+  BOOLEAN: 'boolean'
+} as const;
 
 export class GoogleGenAI {
   private client: GoogleGenerativeAI;
